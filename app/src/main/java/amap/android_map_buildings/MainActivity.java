@@ -11,7 +11,7 @@ import com.amap.api.maps.MapView;
 import com.amap.api.maps.model.CameraPosition;
 import com.amap.api.maps.model.LatLng;
 
-public class MainActivity extends Activity implements View.OnClickListener {
+public class MainActivity extends Activity implements View.OnClickListener, AMap.OnMapLoadedListener {
     private AMap aMap;
     private MapView mapView;
     @Override
@@ -33,8 +33,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private void init() {
         if (aMap == null) {
             aMap = mapView.getMap();
-            aMap.moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(new LatLng(39.92463,116.389139), 18, 60, 0 )));
         }
+        aMap.setOnMapLoadedListener(this);
         CheckBox buildings = (CheckBox) findViewById(R.id.building);
         buildings.setOnClickListener(this);
     }
@@ -42,7 +42,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.building) {
-            aMap.showBuildings(((CheckBox) v).isChecked());// 显示3D 楼块
+            aMap.showBuildings(((CheckBox) v).isChecked());// 设置是否显示3D 楼块
         }
     }
     /**
@@ -52,7 +52,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
     protected void onResume() {
         super.onResume();
         mapView.onResume();
-
     }
 
     /**
@@ -80,5 +79,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
     protected void onDestroy() {
         super.onDestroy();
         mapView.onDestroy();
+    }
+
+    @Override
+    public void onMapLoaded() {
+        aMap.showBuildings(false);//隐藏3D楼块
+        aMap.moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(new LatLng(39.92463,116.389139), 18, 60, 0 )));
     }
 }
